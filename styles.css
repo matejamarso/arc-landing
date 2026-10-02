@@ -561,6 +561,11 @@ img {
   will-change: transform, opacity;
 }
 
+/* The work in the frame opens its project page. */
+.slide.is-current {
+  cursor: pointer;
+}
+
 /* A side cover's own name; it fades out as the cover reaches the frame, where the blue label takes over. */
 .slide__name {
   position: absolute;
@@ -707,6 +712,52 @@ img {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* ---------- Project page (work.html) ---------- */
+
+/* Pictures run wider than the text column, stacked for scrolling. */
+.shots {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: min(920px, 100% - var(--gutter) * 2);
+  margin: 56px auto 0;
+}
+
+.shot {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #efefef;
+  object-fit: cover;
+}
+
+.shot--placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 1px dashed #c4c4c4;
+  background: #f6f6f6;
+  font-weight: 500;
+}
+
+.work-live {
+  margin-top: 24px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* While the sidebar is showing, the pictures must stay clear of it. */
+@media (min-width: 1120px) and (max-width: 1479px) {
+  .shots {
+    width: calc(100vw - 520px);
   }
 }
 

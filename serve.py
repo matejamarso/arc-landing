@@ -1,4 +1,3 @@
-import functools
 import http.server
 import os
 import socketserver
@@ -6,8 +5,17 @@ import socketserver
 PORT = 5180
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
-# Passing the directory explicitly avoids os.getcwd(), which the preview sandbox does not allow.
-Handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=ROOT)
+
+class Handler(http.server.SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        # Passing the directory explicitly avoids os.getcwd(), which the preview sandbox does not allow.
+        super().__init__(*args, directory=ROOT, **kwargs)
+
+    def end_headers(self):
+        # Never let the browser keep an old copy: while the page is being worked on,
+        # a reload must always show the latest files.
+        self.send_header("Cache-Control", "no-store")
+        super().end_headers()
 
 
 # Threaded, so one stalled browser connection cannot block every other request.

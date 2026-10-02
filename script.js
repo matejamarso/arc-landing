@@ -90,6 +90,9 @@
     });
 
     var nearest = clampIndex(Math.round(position));
+    slides.forEach(function (slide, i) {
+      slide.classList.toggle("is-current", i === nearest);
+    });
     if (nearest !== active) {
       var first = active === -1;
       active = nearest;
@@ -184,10 +187,31 @@
     var slide = event.target.closest(".slide");
     if (!slide) return;
     var index = slides.indexOf(slide);
-    if (index !== active) scrollToIndex(index);
+    if (index !== active) {
+      scrollToIndex(index);
+    } else {
+      // Anywhere inside the selection frame counts, not only the cover itself.
+      openWork(slide);
+    }
+  }
+
+  // The cover in the frame leads to its project page: work.html?work=<name as a slug>.
+  function openWork(slide) {
+    var slug = slide
+      .getAttribute("data-name")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+    var from = /yc\.html$/.test(window.location.pathname) ? "&from=yc" : "";
+    window.location.href = "work.html?work=" + slug + from;
   }
 
   function onTrackKeydown(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      openWork(slides[active]);
+      return;
+    }
     if (event.key === "ArrowRight") {
       event.preventDefault();
       scrollToIndex(active + 1);

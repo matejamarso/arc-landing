@@ -1,0 +1,960 @@
+:root {
+  --ink: #202020;
+  --muted: #646464;
+  --faint: #767676;
+  --line: #ebebeb;
+  --blue: #2563eb;
+  --blue-hover: #1d4fd8;
+  --paper: #f8fafe;
+  --grid: #e6ecf7;
+  --column: 600px;
+  --gutter: 20px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: #fff;
+  color: var(--ink);
+  /* TWK Lausanne is used when it is installed on the machine; Inter is the stand-in. */
+  font-family: "TWK Lausanne", "TWKLausanne", Inter, system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 22px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+figure,
+blockquote {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.hl {
+  color: var(--ink);
+}
+
+.label {
+  color: var(--muted);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.col {
+  width: min(var(--column), 100% - var(--gutter) * 2);
+  margin-inline: auto;
+}
+
+/* ---------- Sidebar ---------- */
+
+.sidebar {
+  position: fixed;
+  top: 92px;
+  left: 80px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 160px;
+  transition: opacity 160ms ease;
+}
+
+.sidebar.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sidebar__group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sidebar__link {
+  color: var(--faint);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+  transition: color 120ms ease;
+}
+
+.sidebar__link:hover,
+.sidebar__link.is-active {
+  color: var(--ink);
+}
+
+/* ---------- Intro ---------- */
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-top: 96px;
+}
+
+.logo {
+  display: block;
+  width: 44px;
+  height: 36px;
+  color: var(--ink);
+}
+
+.logo svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.intro__text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.intro__name {
+  font-weight: 500;
+}
+
+.intro__offer {
+  max-width: 520px;
+}
+
+/* A flex row centres the mark on the line, which puts it level with the capital letters. */
+.yc {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 5px;
+}
+
+/* The link and the full stop after it, kept together so the row gap does not split them. */
+.yc__tail {
+  display: flex;
+  align-items: center;
+}
+
+/* One underline runs under the mark and both words, so the whole group reads as a single link. */
+.yc__link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.yc__link::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 1px;
+  left: 0;
+  height: 1px;
+  background: #cfcfcf;
+  transition: background-color 120ms ease;
+}
+
+.yc__link:hover::after {
+  background: var(--ink);
+}
+
+/* The handwritten note sits up and to the right of "companies", outside the text flow. */
+.yc__note {
+  position: absolute;
+  top: -38px;
+  left: calc(100% + 1px);
+  width: 190px;
+  height: 46px;
+  color: var(--ink);
+}
+
+.yc__arrow {
+  position: absolute;
+  top: 17px;
+  left: 2px;
+  width: 34px;
+  height: 28px;
+  overflow: visible;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* pathLength="1" in the markup lets one dash stand for the whole stroke, whatever its real length. */
+.yc__arrow path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+
+.yc__arrow-shaft {
+  animation: yc-draw 320ms cubic-bezier(0.6, 0, 0.3, 1) 400ms forwards;
+}
+
+.yc__arrow-head {
+  animation: yc-draw 160ms ease-out 720ms forwards;
+}
+
+.yc__note-text {
+  position: absolute;
+  top: 3px;
+  left: 38px;
+  font-family: "Caveat", "Bradley Hand", cursive;
+  font-size: 18px;
+  line-height: 20px;
+  font-weight: 400;
+  white-space: nowrap;
+  opacity: 0;
+  transform: rotate(-4deg);
+  transform-origin: left center;
+  animation: yc-note-in 260ms ease-out 860ms forwards;
+}
+
+@keyframes yc-draw {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes yc-note-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px) rotate(-4deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(-4deg);
+  }
+}
+
+.yc__mark {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  background: #f26522;
+  color: #fff;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  transition: background-color 120ms ease;
+}
+
+.button:hover {
+  background: var(--blue-hover);
+}
+
+.text-link {
+  color: var(--muted);
+  text-decoration: underline;
+  text-decoration-color: #cfcfcf;
+  text-underline-offset: 3px;
+  transition: color 120ms ease, text-decoration-color 120ms ease;
+}
+
+.text-link:hover {
+  color: var(--ink);
+  text-decoration-color: var(--ink);
+}
+
+/* ---------- Placeholders (content still to come) ---------- */
+
+/* A dashed box marks text that is not written yet, so it cannot be mistaken for real copy. */
+.placeholder {
+  align-self: flex-start;
+  padding: 6px 10px;
+  border: 1px dashed #c4c4c4;
+  border-radius: 8px;
+  color: var(--muted);
+}
+
+/* A stand-in cover for a work that has no image yet: same size as a real cover. */
+.slide .slide__cover--placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 1px dashed #c4c4c4;
+  background: #f6f6f6;
+  box-shadow: none;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.slide__placeholder-hint {
+  color: var(--faint);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+}
+
+/* ---------- Client logos ---------- */
+
+/* A slow, endless row: two copies of the list travel left together and the edges fade out. */
+.logos {
+  --logo-gap: 48px;
+  display: flex;
+  margin-top: 12px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 56px, #000 calc(100% - 56px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 56px, #000 calc(100% - 56px), transparent);
+}
+
+/* Each copy carries its own trailing gap, so moving by exactly one copy's width loops without a jump. */
+.logos__track {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--logo-gap);
+  height: 20px;
+  padding-right: var(--logo-gap);
+  animation: logos-scroll 30s linear infinite;
+}
+
+.logos:hover .logos__track {
+  animation-play-state: paused;
+}
+
+.logos li {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+
+@keyframes logos-scroll {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Same treatment as Arc's own site: every mark flattened to black, then faded. */
+.logos img {
+  width: auto;
+  max-width: none;
+  filter: brightness(0);
+  opacity: 0.4;
+}
+
+/* Heights are set per mark so the five read as the same optical size. */
+.logos__automattic {
+  height: 9px;
+}
+
+.logos__axiom {
+  height: 14px;
+}
+
+.logos__agentmail {
+  height: 16px;
+}
+
+.logos__sim {
+  height: 15px;
+}
+
+.logos__orchid {
+  height: 16px;
+}
+
+/* ---------- Works strip ---------- */
+
+/*
+  A horizontal, snap-scrolling row of covers. The selection frame stays put in the middle;
+  script.js writes --d on each slide (0 when centred, 1 when a full slide away) and the
+  cover's scale, opacity and shadow follow it.
+*/
+.strip {
+  --slide-w: 600px;
+  --frame-h: 420px;
+  --label-h: 30px;
+  --slide-gap: 16px;
+  position: relative;
+  padding: 72px 0 48px;
+  overflow: hidden;
+}
+
+.strip__stage {
+  position: relative;
+  height: calc(var(--label-h) + var(--frame-h));
+}
+
+.frame-paper {
+  position: absolute;
+  top: var(--label-h);
+  left: 50%;
+  width: var(--slide-w);
+  height: var(--frame-h);
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(to right, var(--grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-position: -1px -1px;
+  transform: translateX(-50%);
+}
+
+.track {
+  position: absolute;
+  top: var(--label-h);
+  right: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  gap: var(--slide-gap);
+  height: var(--frame-h);
+  padding-inline: calc(50% - var(--slide-w) / 2);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  cursor: grab;
+  outline: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+/* While the mouse drags, snapping is off so the row follows the pointer exactly. */
+.track.is-dragging {
+  scroll-snap-type: none;
+  cursor: grabbing;
+}
+
+.slide {
+  --d: 1;
+  position: relative;
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--slide-w);
+  height: var(--frame-h);
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+.slide__cover {
+  width: 84%;
+  height: auto;
+  aspect-ratio: 504 / 316;
+  border-radius: 8px;
+  background: #efefef;
+  object-fit: cover;
+  opacity: calc(1 - 0.45 * var(--d));
+  transform: scale(calc(1 - 0.06 * var(--d)));
+  box-shadow:
+    0 0 0 1px rgba(14, 14, 16, calc(0.08 * var(--d))),
+    0 2px 4px rgba(14, 14, 16, calc(0.06 * (1 - var(--d)))),
+    0 16px 36px rgba(20, 40, 90, calc(0.18 * (1 - var(--d))));
+  user-select: none;
+  -webkit-user-drag: none;
+  will-change: transform, opacity;
+}
+
+/* A side cover's own name; it fades out as the cover reaches the frame, where the blue label takes over. */
+.slide__name {
+  position: absolute;
+  right: 8%;
+  bottom: calc(50% + var(--slide-w) * 0.84 * 316 / 504 / 2 + 6px);
+  left: 8%;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  opacity: var(--d);
+  pointer-events: none;
+}
+
+.slide.is-before .slide__name {
+  text-align: right;
+}
+
+.frame {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 2;
+  width: var(--slide-w);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.frame__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 20px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+.frame__label {
+  color: var(--blue);
+}
+
+.frame__label.is-swapping {
+  animation: label-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.frame__outline {
+  position: relative;
+  height: var(--frame-h);
+  border: 1px solid var(--blue);
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.handle {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--blue);
+  background: #fff;
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.handle--tl {
+  top: -5px;
+  left: -5px;
+}
+
+.handle--tr {
+  top: -5px;
+  right: -5px;
+}
+
+.handle--bl {
+  bottom: -5px;
+  left: -5px;
+}
+
+.handle--br {
+  right: -5px;
+  bottom: -5px;
+}
+
+.frame__size {
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 5px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  transition: opacity 180ms ease, transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* In motion the selection lets go: the outline thins out, the handles shrink, the badge tucks away. */
+.strip.is-scrolling .frame__outline {
+  border-color: rgba(37, 99, 235, 0.35);
+}
+
+.strip.is-scrolling .handle {
+  transform: scale(0.5);
+}
+
+.strip.is-scrolling .frame__size {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-6px);
+}
+
+/* When the row settles the selection grabs the new cover with a small overshoot. */
+.strip.is-locked .frame__outline {
+  animation: frame-lock 460ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.track:focus-visible ~ .frame .frame__outline {
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+@keyframes frame-lock {
+  0% {
+    transform: scale(1.022);
+  }
+  55% {
+    transform: scale(0.996);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes label-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Testimonials ---------- */
+
+.testimonials {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 56px;
+}
+
+.quotes {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.quote {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+}
+
+.quote + .quote {
+  border-top: 1px solid var(--line);
+}
+
+.quote__text {
+  color: var(--muted);
+  line-height: 23px;
+}
+
+.quote__author {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 8px;
+}
+
+.quote__author img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--line);
+  object-fit: cover;
+}
+
+.quote__name {
+  font-weight: 500;
+}
+
+/* ---------- Pricing ---------- */
+
+.pricing {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 80px;
+}
+
+/* One plan per row: what it is on the left, what it costs on the right, what you get underneath. */
+.plans {
+  border-top: 1px solid var(--line);
+}
+
+.plan {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 0 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.plan__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 40px;
+  align-items: start;
+}
+
+.plan__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.plan__name {
+  font-weight: 500;
+}
+
+.plan__description {
+  max-width: 420px;
+  color: var(--muted);
+}
+
+.plan__price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  white-space: nowrap;
+}
+
+.plan__amount {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.plan__unit {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.plan__features {
+  display: grid;
+  /* The right column is wider so the longest feature stays on one line. */
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 4px 24px;
+}
+
+.plan__features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.plan__features li::before {
+  content: "";
+  flex: none;
+  width: 12px;
+  height: 12px;
+  margin-top: 5px;
+  background: no-repeat center / contain
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23767676' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 6.5 4.8 9 10 3'/%3E%3C/svg%3E");
+}
+
+/* ---------- Pull quote ---------- */
+
+.pullquote {
+  margin-top: 56px;
+  padding-left: 16px;
+  border-left: 2px solid #e4e4e4;
+}
+
+.pullquote blockquote {
+  color: var(--muted);
+  line-height: 23px;
+}
+
+.pullquote figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+/* ---------- Closing ---------- */
+
+.closing {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 64px;
+}
+
+.closing__statement {
+  font-weight: 500;
+}
+
+/* ---------- Footer ---------- */
+
+.footer {
+  padding: 112px 0 64px;
+}
+
+.footer__legal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.footer__legal-links {
+  display: flex;
+  gap: 20px;
+}
+
+.footer__legal a:hover {
+  color: var(--ink);
+}
+
+/* ---------- Smaller screens ---------- */
+
+/* The sidebar needs the left margin to itself. */
+@media (max-width: 1119px) {
+  .sidebar {
+    display: none;
+  }
+}
+
+/* Below this width there is no room to the right of the line for the handwritten note. */
+@media (max-width: 519px) {
+  .yc__note {
+    display: none;
+  }
+}
+
+@media (max-width: 679px) {
+  .intro {
+    padding-top: 56px;
+  }
+
+  .strip {
+    --slide-w: calc(100vw - var(--gutter) * 2);
+    --frame-h: calc((100vw - var(--gutter) * 2) * 0.7);
+    --slide-gap: 12px;
+  }
+
+  .plan__head {
+    column-gap: 20px;
+  }
+
+  .plan__features {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .sidebar,
+  .sidebar__link,
+  .button,
+  .text-link,
+  .frame__outline,
+  .handle,
+  .frame__size {
+    transition: none;
+  }
+
+  .slide__cover {
+    transform: none;
+  }
+
+  /* The note is simply there, already drawn. */
+  .yc__arrow path {
+    stroke-dashoffset: 0;
+    opacity: 1;
+    animation: none;
+  }
+
+  .yc__note-text {
+    opacity: 1;
+    animation: none;
+  }
+
+  /* No auto-motion: the logos sit still in one wrapped row and the looping copy is hidden. */
+  .logos {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .logos__track {
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    gap: 14px 24px;
+    height: auto;
+    padding-right: 0;
+    animation: none;
+  }
+
+  .logos__track[aria-hidden="true"] {
+    display: none;
+  }
+}

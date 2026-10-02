@@ -10,8 +10,10 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 Handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=ROOT)
 
 
-class Server(socketserver.TCPServer):
+# Threaded, so one stalled browser connection cannot block every other request.
+class Server(socketserver.ThreadingTCPServer):
     allow_reuse_address = True
+    daemon_threads = True
 
 
 with Server(("", PORT), Handler) as httpd:

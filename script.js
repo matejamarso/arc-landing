@@ -18,6 +18,28 @@
     });
   }
 
+  // Highlighter strokes swipe in the first time each one scrolls into view.
+  var markers = Array.prototype.slice.call(document.querySelectorAll(".marker"));
+  if ("IntersectionObserver" in window) {
+    var markerObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-in");
+          markerObserver.unobserve(entry.target);
+        });
+      },
+      { threshold: 1 }
+    );
+    markers.forEach(function (marker) {
+      markerObserver.observe(marker);
+    });
+  } else {
+    markers.forEach(function (marker) {
+      marker.classList.add("is-in");
+    });
+  }
+
   addSounds(".sidebar__link", "nav-hover", "nav-select");
   addSounds(".button, .text-link", "cta-hover", "cta-select");
 
